@@ -4,6 +4,7 @@
 // </copyright>
 //----------------------------------------------------------------------------------------------
 
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Microsoft.Tools.WindowsDevicePortal
@@ -61,9 +62,11 @@ namespace Microsoft.Tools.WindowsDevicePortal
         /// </returns>
         public async Task TerminateApplicationAsync(string packageName)
         {
+            var s = string.Format("package={0}", Utilities.Hex64Encode(packageName));
+            Debug.WriteLine(s);
             await this.DeleteAsync(
                 TaskManagerApi,
-                string.Format("package={0}", Utilities.Hex64Encode(packageName)));
+                s);
         }
     }
 }

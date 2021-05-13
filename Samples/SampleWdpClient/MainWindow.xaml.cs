@@ -41,6 +41,7 @@ namespace SampleWdpClient
         public MainWindow()
         {
             InitializeComponent();
+
         }
 
         /// <summary>
@@ -136,9 +137,7 @@ namespace SampleWdpClient
         /// </summary>
         private void EnableConnectButton()
         {
-            bool enable = (!string.IsNullOrWhiteSpace(this.address.Text) &&
-                        !string.IsNullOrWhiteSpace(this.username.Text) &&
-                        !string.IsNullOrWhiteSpace(this.password.Password));
+            bool enable = true;
 
             this.connectToDevice.IsEnabled = enable;
         }
@@ -432,7 +431,17 @@ namespace SampleWdpClient
 
                     try
                     {
-                        await this.portal.ShutdownAsync();
+                        Task<AppPackages> packagesTask = portal.GetInstalledAppPackagesAsync();
+
+                        packagesTask.Wait();
+                        foreach (var p in packagesTask.Result.Packages)
+                        {
+
+                            sb.AppendLine(p.FullName);
+                        }
+                        this.MarshalUpdateCommandOutput(sb.ToString());
+
+                        await this.portal.TerminateApplicationAsync("Microsoft.RemoteDesktop_10.2.1636.0_x64__8wekyb3d8bbwe");
                     }
                     catch(Exception ex)
                     {
